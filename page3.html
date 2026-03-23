@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    
+    <script src="js/jquery-2.2.4.min.js"></script>
+    <script src="js/jquery.mobile-1.4.5.min.js"></script>
+    <script src="js/app.js"></script>
+    
+    <!-- Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' https://unpkg.com; script-src * 'unsafe-inline' 'unsafe-eval' https://unpkg.com; img-src * data: tile.openstreetmap.org;" />
+    
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <title>Nueva Posición - UAB</title>
+    
+    <style>
+        /* Estilos específicos para el formulario */
+        .form-container {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-md) 0;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-group input, 
+        .form-group textarea {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius-md);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .form-group input:focus, 
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .coord-group {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+        
+        .coord-group .form-group {
+            flex: 1;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .btn-group .ui-btn {
+            flex: 1 1 auto;
+            min-width: 120px;
+        }
+        
+        .btn-gps {
+            background: linear-gradient(135deg, #4CAF50, #45a049) !important;
+            color: white !important;
+            border: none !important;
+        }
+        
+        .btn-camera {
+            background: linear-gradient(135deg, #2196F3, #1976D2) !important;
+            color: white !important;
+            border: none !important;
+        }
+        
+        .btn-create {
+            background: var(--primary-gradient) !important;
+            color: white !important;
+            border: none !important;
+            width: 100% !important;
+            margin-top: var(--spacing-md) !important;
+            padding: var(--spacing-md) !important;
+            font-size: 18px !important;
+            font-weight: bold !important;
+        }
+        
+        .image-preview {
+            margin: var(--spacing-lg) 0;
+            text-align: center;
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-md);
+            background: #f8f9fa;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .image-preview .placeholder {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        .preview-map {
+            height: 200px;
+            width: 100%;
+            border-radius: var(--border-radius-md);
+            margin-top: var(--spacing-sm);
+            border: 2px solid white;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .location-status {
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius-sm);
+            margin-top: var(--spacing-xs);
+            font-size: 12px;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+    </style>
+    
+</head>
+
+<body>
+    <div data-role="page" id="new-position">
+
+        <!-- Panel Lateral (mismo que en index) -->
+        <div data-role="panel" id="myPanel" data-display="overlay" data-position="left" data-theme="a">
+            <div class="panel-header">
+                <div class="avatar">
+                    <span>👨‍🎓</span>
+                </div>
+                <h2>Marc García</h2>
+                <p>marc.garcia@uab.cat</p>
+            </div>
+            
+            <ul class="panel-menu">
+                <li>
+                    <a href="index.html">
+                        <span class="ui-icon ui-icon-home ui-btn-icon-left"></span>
+                        Inicio
+                    </a>
+                </li>
+                <li>
+                    <a href="page2.html">
+                        <span class="ui-icon ui-icon-arrow-r ui-btn-icon-left"></span>
+                        Página Dos
+                    </a>
+                </li>
+                <li>
+                    <a href="page3.html" class="ui-btn-active">
+                        <span class="ui-icon ui-icon-plus ui-btn-icon-left"></span>
+                        Nueva Posición
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="ui-icon ui-icon-user ui-btn-icon-left"></span>
+                        Perfil
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="ui-icon ui-icon-gear ui-btn-icon-left"></span>
+                        Ajustes
+                    </a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="#">
+                        <span class="ui-icon ui-icon-info ui-btn-icon-left"></span>
+                        Acerca de
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="ui-icon ui-icon-mail ui-btn-icon-left"></span>
+                        Contacto
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="panel-footer">
+                Universitat Autònoma de Barcelona © 2024
+            </div>
+        </div>
+
+        <!-- Header con botón de menú -->
+        <div data-role="header" data-position="fixed">
+            <a href="#myPanel" class="ui-btn ui-btn-inline ui-corner-all menu-btn">
+                <span class="ui-icon ui-icon-bars"></span>
+            </a>
+            <h1>Nueva Posición</h1>
+            
+            <a href="#" class="ui-btn ui-btn-inline ui-corner-all menu-btn">
+                <span class="ui-icon ui-icon-search"></span>
+            </a>
+        </div>
+
+        <!-- Contenido Principal -->
+        <div data-role="main" class="ui-content">
+            
+            <div class="welcome-card">
+                <h2>Añadir Nueva Posición</h2>
+                <p>Completa el formulario para añadir una nueva ubicación al mapa</p>
+            </div>
+            
+            <div class="form-container">
+                <form id="positionForm">
+                    <!-- Nombre de la etiqueta -->
+                    <div class="form-group">
+                        <label for="tagName">Nombre de la etiqueta *</label>
+                        <input type="text" id="tagName" name="tagName" placeholder="Ej: Biblioteca UAB" required>
+                    </div>
+                    
+                    <!-- Descripción -->
+                    <div class="form-group">
+                        <label for="description">Descripción</label>
+                        <textarea id="description" name="description" placeholder="Describe este lugar..."></textarea>
+                    </div>
+                    
+                    <!-- Coordenadas (Latitud y Longitud) -->
+                    <div class="coord-group">
+                        <div class="form-group">
+                            <label for="latitude">Latitud</label>
+                            <input type="number" id="latitude" name="latitude" step="any" placeholder="41.3851">
+                        </div>
+                        <div class="form-group">
+                            <label for="longitude">Longitud</label>
+                            <input type="number" id="longitude" name="longitude" step="any" placeholder="2.1734">
+                        </div>
+                    </div>
+                    
+                    <!-- Estado de ubicación -->
+                    <div id="locationStatus" class="location-status"></div>
+                    
+                    <!-- Mapa de previsualización -->
+                    <div id="previewMap" class="preview-map"></div>
+                    
+                    <!-- Botones de acción -->
+                    <div class="btn-group">
+                        <!-- Botón para obtener coordenadas GPS -->
+                        <a href='javascript:getCurrentPosition()' id="getLocationBtn" class="ui-btn ui-btn-inline ui-corner-all btn-gps">
+                            <span class="ui-icon ui-icon-location ui-btn-icon-left"></span>
+                            Obtener GPS
+                        </a>
+                        
+                        <!-- Botón para obtener imagen -->
+                        <a href="#" id="getImageBtn" class="ui-btn ui-btn-inline ui-corner-all btn-camera">
+                            <span class="ui-icon ui-icon-camera ui-btn-icon-left"></span>
+                            Obtener Imagen
+                        </a>
+                    </div>
+                    
+                    <!-- Espacio para insertar imagen -->
+                    <div class="image-preview" id="imagePreview">
+                        <div class="placeholder">
+                            <span class="ui-icon ui-icon-image" style="display: block; margin: 0 auto 10px; transform: scale(2);"></span>
+                            No hay imagen seleccionada
+                        </div>
+                    </div>
+                    
+                    <!-- Botón para crear la posición -->
+                    <a href="#" id="createPositionBtn" class="ui-btn ui-corner-all btn-create">
+                        <span class="ui-icon ui-icon-check ui-btn-icon-left"></span>
+                        CREAR POSICIÓN
+                    </a>
+                </form>
+            </div>
+            
+            <!-- Lista de posiciones guardadas -->
+            <div class="feature-card" style="margin-top: 20px;">
+                <h4>Posiciones Guardadas</h4>
+                <p>Total: <span id="savedCount">0</span> ubicaciones</p>
+                <a href="page2.html" data-transition="slide" class="ui-btn ui-btn-inline ui-corner-all ui-btn-b" style="width: 100%;">
+                    Ver en el mapa
+                </a>
+            </div>
+            
+        </div>
+
+        <!-- Footer -->
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="index.html" class="ui-btn ui-icon-home ui-btn-icon-top" data-transition="slide">Inicio</a></li>
+                    <li><a href="page2.html" class="ui-btn ui-icon-arrow-r ui-btn-icon-top" data-transition="slide">Mapa</a></li>
+                    <li><a href="page3.html" class="ui-btn ui-icon-plus ui-btn-icon-top ui-btn-active" data-transition="slide">Nuevo</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    
+    <script type="text/javascript" src="js/index.js"></script>
+
+    <script>
+        console.log('Page3 script iniciado');
+        
+        $(document).ready(function() {
+            console.log('Page3 document ready');
+            
+            // Cerrar panel al hacer clic en elementos del menú
+            $('.panel-menu a').on('click', function() {
+                setTimeout(function() {
+                    $('#myPanel').panel('close');
+                }, 300);
+            });
+            
+            // Variables globales
+            window.savedPositions = window.savedPositions || [];
+            window.currentImageData = null;
+            window.previewMap = null;
+            window.currentMarker = null;
+            
+            // Inicializar página
+            initializeForm();
+            
+            // Actualizar contador
+            updateSavedCount();
+        });
+        
+        app.initialize();
+        
+        function initializeForm() {
+            console.log('initializeForm llamada');
+            
+            // Inicializar mapa de previsualización
+            setTimeout(function() {
+                console.log('Inicializando mapa de previsualización');
+                
+                if ($('#previewMap').length > 0) {
+                    console.log('Contenedor previewMap encontrado');
+                    
+                    if (!window.previewMap) {
+                        console.log('Creando nuevo mapa');
+                        
+                        var defaultCenter = [41.3851, 2.1734]; // Barcelona
+                        
+                        try {
+                            window.previewMap = L.map('previewMap', {
+                                center: defaultCenter,
+                                zoom: 13
+                            });
+                            
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: '© OpenStreetMap contributors',
+                                maxZoom: 19
+                            }).addTo(window.previewMap);
+                            
+                            console.log('Mapa creado correctamente');
+                            
+                            // Añadir marcador inicial
+                            updatePreviewMarker(defaultCenter[0], defaultCenter[1]);
+                            
+                            // Forzar ajuste de tamaño
+                            setTimeout(function() {
+                                window.previewMap.invalidateSize();
+                                console.log('Mapa ajustado');
+                            }, 200);
+                            
+                        } catch (error) {
+                            console.error('Error creando mapa:', error);
+                        }
+                    }
+                } else {
+                    console.log('Contenedor previewMap NO encontrado');
+                }
+            }, 500);
+            
+            // Evento para obtener ubicación GPS
+            $('#getLocationBtn').on('click', function(e) {
+                e.preventDefault();
+                console.log('Botón GPS clickeado');
+                
+                // Verificar que la función global existe
+                if (typeof window.getLocationForFields === 'function') {
+                    console.log('Llamando a window.getLocationForFields');
+                    window.getLocationForFields('latitude', 'longitude');
+                } else {
+                    console.error('window.getLocationForFields NO es una función');
+                    alert('Error: Función de GPS no disponible');
+                }
+            });
+            
+            // Evento para obtener imagen
+            $('#getImageBtn').on('click', function(e) {
+                e.preventDefault();
+                console.log('Botón imagen clickeado');
+                getImageFromCamera();
+            });
+            
+            // Evento para crear posición
+            $('#createPositionBtn').on('click', function(e) {
+                e.preventDefault();
+                console.log('Botón crear clickeado');
+                createPosition();
+            });
+            
+            // Eventos para actualizar mapa cuando cambian coordenadas
+            $('#latitude, #longitude').on('change', function() {
+                console.log('Campos de coordenadas cambiados');
+                updateLocationFromInputs();
+            });
+        }
+        
+        function getImageFromCamera() {
+            console.log('getImageFromCamera llamada');
+            var imagePreview = $('#imagePreview');
+            
+            // Simular carga de imagen
+            imagePreview.html('<img src="https://via.placeholder.com/300x200?text=Imagen+de+prueba" alt="Vista previa">');
+            window.currentImageData = 'https://via.placeholder.com/300x200?text=Imagen+de+prueba';
+            
+            var statusDiv = $('#locationStatus');
+            statusDiv.removeClass().addClass('location-status status-success')
+                .html('✓ Imagen cargada correctamente');
+        }
+        
+        function updatePreviewMarker(lat, lng) {
+            console.log('updatePreviewMarker llamada con:', lat, lng);
+            
+            if (!window.previewMap) {
+                console.log('previewMap no disponible');
+                return;
+            }
+            
+            // Eliminar marcador anterior
+            if (window.currentMarker) {
+                window.previewMap.removeLayer(window.currentMarker);
+            }
+            
+            // Crear nuevo marcador
+            window.currentMarker = L.marker([lat, lng]).addTo(window.previewMap)
+                .bindPopup('Nueva posición')
+                .openPopup();
+            
+            console.log('Marcador actualizado');
+        }
+        
+        // Hacer updatePreviewMarker accesible globalmente
+        window.updatePreviewMap = function(lat, lng) {
+            console.log('window.updatePreviewMap llamada con:', lat, lng);
+            updatePreviewMarker(lat, lng);
+            if (window.previewMap) {
+                window.previewMap.setView([lat, lng], 15);
+            }
+        };
+        
+        function updateLocationFromInputs() {
+            console.log('updateLocationFromInputs llamada');
+            
+            var lat = parseFloat($('#latitude').val());
+            var lng = parseFloat($('#longitude').val());
+            
+            console.log('Valores:', lat, lng);
+            
+            if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                updatePreviewMarker(lat, lng);
+                
+                if (window.previewMap) {
+                    window.previewMap.setView([lat, lng], 15);
+                }
+                
+                $('#locationStatus').removeClass().addClass('location-status status-success')
+                    .html('✓ Coordenadas válidas');
+            }
+        }
+        
+        function createPosition() {
+            console.log('createPosition llamada');
+            
+            var tagName = $('#tagName').val();
+            var lat = $('#latitude').val();
+            var lng = $('#longitude').val();
+            
+            if (!tagName) {
+                alert('Por favor, introduce un nombre para la etiqueta');
+                return;
+            }
+            
+            if (!lat || !lng) {
+                alert('Por favor, introduce las coordenadas o usa el botón GPS');
+                return;
+            }
+            
+            var newPosition = {
+                id: Date.now(),
+                name: tagName,
+                description: $('#description').val(),
+                latitude: parseFloat(lat),
+                longitude: parseFloat(lng),
+                image: window.currentImageData,
+                date: new Date().toLocaleString()
+            };
+            
+            console.log('Nueva posición:', newPosition);
+            
+            window.savedPositions.push(newPosition);
+            localStorage.setItem('savedPositions', JSON.stringify(window.savedPositions));
+            
+            updateSavedCount();
+            
+            alert('¡Posición creada correctamente!');
+            clearForm();
+        }
+        
+        function clearForm() {
+            console.log('clearForm llamada');
+            
+            $('#tagName').val('');
+            $('#description').val('');
+            $('#latitude').val('');
+            $('#longitude').val('');
+            $('#imagePreview').html('<div class="placeholder"><span class="ui-icon ui-icon-image" style="display: block; margin: 0 auto 10px; transform: scale(2);"></span>No hay imagen seleccionada</div>');
+            window.currentImageData = null;
+            
+            if (window.currentMarker && window.previewMap) {
+                window.previewMap.removeLayer(window.currentMarker);
+                window.currentMarker = null;
+            }
+            
+            $('#locationStatus').removeClass().html('');
+        }
+        
+        function updateSavedCount() {
+            console.log('updateSavedCount llamada');
+            
+            var saved = localStorage.getItem('savedPositions');
+            if (saved) {
+                window.savedPositions = JSON.parse(saved);
+            }
+            $('#savedCount').text(window.savedPositions.length);
+        }
+        
+        // Inicializar al mostrar la página
+        $(document).on('pageshow', '#new-position', function() {
+            console.log('Pageshow event');
+            
+            setTimeout(function() {
+                if (window.previewMap) {
+                    window.previewMap.invalidateSize();
+                    console.log('Mapa ajustado en pageshow');
+                }
+                updateSavedCount();
+            }, 300);
+        });
+    </script>
+</body>
+
+</html>

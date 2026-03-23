@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    
+    <script src="js/jquery-2.2.4.min.js"></script>
+    <script src="js/jquery.mobile-1.4.5.min.js"></script>
+    <script src="js/app.js"></script>
+    
+    <!-- Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; style-src * 'unsafe-inline' https://unpkg.com; script-src * 'unsafe-inline' 'unsafe-eval' https://unpkg.com; img-src * data: tile.openstreetmap.org;" />
+    
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <title>Página Dos - UAB</title>
+    
+</head>
+
+<body>
+    <div data-role="page" id="second">
+
+        <!-- Panel Lateral (mismo que en index) -->
+        <div data-role="panel" id="myPanel" data-display="overlay" data-position="left" data-theme="a">
+            <div class="panel-header">
+                <div class="avatar">
+                    <span>👨‍🎓</span>
+                </div>
+                <h2>Marc García</h2>
+                <p>marc.garcia@uab.cat</p>
+            </div>
+            
+            <ul class="panel-menu">
+                <li>
+                    <a href="index.html">
+                        <span class="ui-icon ui-icon-home ui-btn-icon-left"></span>
+                        Inicio
+                    </a>
+                </li>
+                <li>
+                    <a href="page2.html">
+                        <span class="ui-icon ui-icon-arrow-r ui-btn-icon-left"></span>
+                        Página Dos
+                    </a>
+                </li>
+                <li>
+                    <a href="page3.html">
+                        <span class="ui-icon ui-icon-plus ui-btn-icon-left"></span>
+                        Nueva Posición
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="ui-icon ui-icon-user ui-btn-icon-left"></span>
+                        Perfil
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="ui-icon ui-icon-gear ui-btn-icon-left"></span>
+                        Ajustes
+                    </a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="#">
+                        <span class="ui-icon ui-icon-info ui-btn-icon-left"></span>
+                        Acerca de
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <span class="ui-icon ui-icon-mail ui-btn-icon-left"></span>
+                        Contacto
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="panel-footer">
+                Universitat Autònoma de Barcelona © 2024
+            </div>
+        </div>
+
+        <!-- Header con botón de menú -->
+        <div data-role="header" data-position="fixed">
+            <a href="#myPanel" class="ui-btn ui-btn-inline ui-corner-all menu-btn">
+                <span class="ui-icon ui-icon-bars"></span>
+            </a>
+            <h1>UAB App</h1>
+            
+            <a href="#" class="ui-btn ui-btn-inline ui-corner-all menu-btn">
+                <span class="ui-icon ui-icon-search"></span>
+            </a>
+        </div>
+
+        <!-- Contenido Principal -->
+        <div data-role="main" class="ui-content">
+            
+            <div class="welcome-card">
+                <h2>Segunda Página</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </div>
+            
+            <p><strong>Lorem ipsum dolor sit amet</strong>, consectetur adipiscing elit. Nulla facilisi. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec vel magna vel nisl consequat suscipit.</p>
+            
+            <!-- Mapa -->
+            <div class="map-container">
+                <h3 style="text-align: center; color: #667eea; margin-bottom: 15px;">Mapa de Catalunya</h3>
+                <div id="map" style="height: 400px; width: 100%; border-radius: 10px; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); background: #e9ecef;"></div>
+                <p style="text-align: center; font-size: 12px; margin-top: 10px; color: #666;">© Colaboradores de OpenStreetMap</p>
+            </div>
+            
+            <div class="ui-grid-a">
+                <div class="ui-block-a" style="width: 48%; margin-right: 2%;">
+                    <div class="ui-bar ui-bar-a">
+                        <h4>Lorem Ipsum</h4>
+                        <p>Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet.</p>
+                    </div>
+                </div>
+                <div class="ui-block-b" style="width: 50%;">
+                    <div class="ui-bar ui-bar-a">
+                        <h4>Dolor Sit Amet</h4>
+                        <p>Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="index.html" data-transition="slide" data-direction="reverse" 
+               class="ui-btn ui-btn-inline ui-corner-all ui-btn-b" style="width: 100%;">
+                Volver a Inicio
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="index.html" class="ui-btn ui-icon-home ui-btn-icon-top" data-transition="slide">Inicio</a></li>
+                    <li><a href="page2.html" class="ui-btn ui-icon-arrow-r ui-btn-icon-top ui-btn-active" data-transition="slide">Mapa</a></li>
+                    <li><a href="page3.html" class="ui-btn ui-icon-plus ui-btn-icon-top" data-transition="slide">Nuevo</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+    
+    <script type="text/javascript" src="js/index.js"></script>
+    
+    <script>
+        console.log('Script de page2.html cargado');
+        
+        // Variable global para el mapa
+        var map = null;
+        
+        $(document).ready(function() {
+            console.log('page2.html document ready');
+            
+            // Cerrar panel al hacer clic en elementos del menú
+            $('.panel-menu a').on('click', function() {
+                setTimeout(function() {
+                    $('#myPanel').panel('close');
+                }, 300);
+            });
+        });
+        
+        app.initialize();
+        
+        // Inicializar mapa cuando la página se muestra
+        $(document).on('pageshow', '#second', function() {
+            console.log('Página segunda mostrada, inicializando mapa...');
+            
+            // Múltiples intentos para asegurar que el mapa se muestra
+            setTimeout(function() {
+                initMap();
+            }, 300);
+            
+            setTimeout(function() {
+                if (map) {
+                    map.invalidateSize();
+                    console.log('Ajuste de mapa adicional');
+                }
+            }, 600);
+        });
+        
+        function initMap() {
+            console.log('initMap llamada');
+            
+            // Verificar si el contenedor del mapa existe
+            if ($('#map').length === 0) {
+                console.error('Contenedor del mapa no encontrado');
+                return;
+            }
+            
+            console.log('Contenedor del mapa encontrado');
+            
+            // Centro de Cataluña (Barcelona)
+            var cataloniaCenter = [41.3851, 2.1734];
+            
+            // Crear el mapa si no existe
+            if (!map) {
+                console.log('Creando nuevo mapa...');
+                
+                try {
+                    map = L.map('map', {
+                        center: cataloniaCenter,
+                        zoom: 8
+                    });
+                    
+                    // Añadir capa base de OpenStreetMap
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors',
+                        maxZoom: 19
+                    }).addTo(map);
+                    
+                    console.log('Mapa creado correctamente');
+                    
+                    // Forzar el ajuste del tamaño
+                    setTimeout(function() {
+                        map.invalidateSize();
+                        console.log('Tamaño del mapa ajustado');
+                    }, 100);
+                    
+                } catch (error) {
+                    console.error('Error creando el mapa:', error);
+                    return;
+                }
+            } else {
+                console.log('Mapa ya existente');
+                // Si el mapa ya existe, solo ajustamos tamaño
+                setTimeout(function() {
+                    map.invalidateSize();
+                }, 100);
+            }
+            
+            // Cargar y mostrar posiciones guardadas
+            loadSavedPositions();
+        }
+        
+        function loadSavedPositions() {
+            console.log('loadSavedPositions llamada');
+            
+            if (!map) {
+                console.error('Mapa no inicializado');
+                return;
+            }
+            
+            // Limpiar marcadores anteriores si existen
+            if (window.markersLayer) {
+                console.log('Limpiando capa de marcadores anterior');
+                map.removeLayer(window.markersLayer);
+            }
+            
+            // Crear nueva capa para marcadores
+            window.markersLayer = L.layerGroup().addTo(map);
+            
+            // Cargar posiciones del localStorage
+            var savedPositions = JSON.parse(localStorage.getItem('savedPositions') || '[]');
+            console.log('Posiciones cargadas:', savedPositions.length);
+            
+            if (savedPositions.length > 0) {
+                var bounds = [];
+                
+                savedPositions.forEach(function(pos, index) {
+                    try {
+                        console.log('Añadiendo marcador para:', pos.name);
+                        
+                        // Crear marcador
+                        var marker = L.marker([pos.latitude, pos.longitude]).addTo(window.markersLayer);
+                        
+                        // Añadir al array de bounds
+                        bounds.push([pos.latitude, pos.longitude]);
+                        
+                        // Crear contenido del popup
+                        var popupContent = '<div style="min-width:200px;">';
+                        popupContent += '<strong style="color:#667eea; font-size:16px;">' + pos.name + '</strong><br>';
+                        
+                        if (pos.description) {
+                            popupContent += '<p style="margin:5px 0; color:#666;">' + pos.description + '</p>';
+                        }
+                        
+                        if (pos.image) {
+                            popupContent += '<img src="' + pos.image + '" style="max-width:100%; max-height:150px; border-radius:5px; margin:5px 0; border:2px solid #667eea;">';
+                        }
+                        
+                        if (pos.date) {
+                            popupContent += '<br><small style="color:#999;">Añadido: ' + pos.date + '</small>';
+                        }
+                        
+                        popupContent += '</div>';
+                        
+                        marker.bindPopup(popupContent);
+                        
+                        console.log('Marcador ' + (index + 1) + ' añadido: ' + pos.name);
+                        
+                    } catch (error) {
+                        console.error('Error añadiendo marcador:', error);
+                    }
+                });
+                
+                // Ajustar zoom para mostrar todos los marcadores
+                if (bounds.length > 0) {
+                    try {
+                        var group = L.featureGroup(bounds.map(function(coord) {
+                            return L.marker(coord);
+                        }));
+                        map.fitBounds(group.getBounds().pad(0.2));
+                        console.log('Zoom ajustado a los marcadores');
+                    } catch (error) {
+                        console.error('Error ajustando bounds:', error);
+                    }
+                }
+            } else {
+                // Si no hay posiciones, centrar en Cataluña
+                map.setView([41.3851, 2.1734], 8);
+                console.log('No hay posiciones, mapa centrado en Cataluña');
+            }
+            
+            // Forzar ajuste final del mapa
+            setTimeout(function() {
+                map.invalidateSize();
+                console.log('Ajuste final del mapa');
+            }, 200);
+        }
+        
+        // Función para centrar el mapa en una ubicación específica (útil para botones)
+        window.centerOnMap = function(lat, lng, zoom) {
+            console.log('Centrando mapa en:', lat, lng);
+            if (map) {
+                map.setView([lat, lng], zoom || 15);
+            }
+        };
+        
+    </script>
+</body>
+
+</html>
